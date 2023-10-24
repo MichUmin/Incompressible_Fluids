@@ -17,7 +17,7 @@ class point
         double z() const;
         vector<double> coordinates() const;
 };
-/*
+
 class face
 {
     private:
@@ -33,7 +33,7 @@ class face
         //cell* owner() const;
 };
 
-
+/*
 class cell
 {
     private:
