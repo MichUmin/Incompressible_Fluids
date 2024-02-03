@@ -33,3 +33,14 @@ def volume(A, B, C, D):
     help += AD_y*base_area[1]
     help += AD_z*base_area[2]
     return abs(help/3)
+
+def distance(A, B):
+    result = (A.x - B.x)**2
+    result += (A.y - B.y)**2
+    result += (A.z - B.z)**2
+    return (math.sqrt(result))
+
+def vec_len(vec):
+    result = vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]
+    return (math.sqrt(result))
+    

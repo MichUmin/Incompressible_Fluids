@@ -1,10 +1,5 @@
-from dataclasses import dataclass, field
-import math
-import argparse
+
 import mesh_geometry_operations as geo
-import mesh_debug
-
-
 
 class mesh:
 
@@ -21,6 +16,7 @@ class mesh:
             self.neighbour = -1
             self.centre = False
             self.area = [0.0 , 0.0, 0.0]
+            self.inter_coef = 0.5
 
     class cell:
         def __init__(self, faces_list):
@@ -102,19 +98,8 @@ class mesh:
             for j in range(num_sides):
                 sides_list[j] = int(sides_list[j])
             self.cells.append(self.cell(sides_list))
-            for j in range(num_sides):
-                side = sides_list[j]
-                print(side)
-                if (self.faces[side].owner < 0):
-                    # face does not have an owner
-                    # this is the smallest number cell it belongs to, so this cell becomes the owner
-                    self.faces[side].owner = i
-                else:
-                    # faces has an owner so this is a neighbour
-                    self.faces[side].neighbour = i
-                    the_other_cell = self.faces[side].owner
-                    self.cells[i].neighbours.append(the_other_cell)
-                    self.cells[the_other_cell].neighbours.append(i)
+
+            #add centre and volume
             temp_centre_x = 0
             temp_centre_y = 0
             temp_centre_z = 0
@@ -156,27 +141,20 @@ class mesh:
                     B = self.points[side.vertices[next]]
                     self.cells[i].volume += geo.volume(self.cells[i].centre, C, A, B)
 
-
-
-parser = argparse.ArgumentParser()
-parser.add_argument('points_file_address')
-parser.add_argument('faces_file_address')
-parser.add_argument('cells_file_address')
-parser.add_argument('boundary_file_address')
-files = parser.parse_args()
-
-points_file = open(files.points_file_address, 'r')
-faces_file = open(files.faces_file_address, 'r')
-cells_file = open(files.cells_file_address, 'r')
-boundaries_file = open(files.boundary_file_address, 'r')
-mesh1 = mesh(points_file, faces_file, cells_file, boundaries_file)
-points_file.close()
-faces_file.close()
-cells_file.close()
-boundaries_file.close()
-del points_file
-del faces_file
-del cells_file
-del boundaries_file
-
-mesh_debug.print_neighbours(mesh1)
+            #add owner / neighbour
+            for j in range(num_sides):
+                side = sides_list[j]
+                if (self.faces[side].owner < 0):
+                    # face does not have an owner
+                    # this is the smallest number cell it belongs to, so this cell becomes the owner
+                    self.faces[side].owner = i
+                else:
+                    # faces has an owner so this is a neighbour
+                    self.faces[side].neighbour = i
+                    the_other_cell = self.faces[side].owner
+                    d_p = geo.distance(self.faces[side].centre, self.cells[the_other_cell].centre)
+                    d_n = geo.distance(self.faces[side].centre, self.cells[i].centre)
+                    self.faces[side].inter_coef = d_p / (d_p + d_n)
+                    self.cells[i].neighbours.append(the_other_cell)
+                    self.cells[the_other_cell].neighbours.append(i)
+            
