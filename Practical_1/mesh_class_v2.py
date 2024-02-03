@@ -32,7 +32,7 @@ def abs_area(A, B, C):
     return math.sqrt(area_2)
      
 def add_vectors(v1, v2):
-    help_v = [0, 0, 0]
+    help_v = [0.0, 0.0, 0.0]
     help_v[0] = v1[0] + v2[0]
     help_v[1] = v1[1] + v2[1]
     help_v[2] = v1[2] + v2[2]
