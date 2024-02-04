@@ -6,7 +6,6 @@ movingWall
 4 5
 )
 fixedWalls
-3
 6
 (
 6 7 8 9 10 11
