@@ -106,10 +106,11 @@ class mesh:
             temp_centre_y = 0
             temp_centre_z = 0
             for side_index in range(num_sides):
-                side = self.faces[self.cells[i].faces[side_index]]
-                temp_centre_x += side.centre.x / n_faces
-                temp_centre_y += side.centre.y / n_faces
-                temp_centre_z += side.centre.z / n_faces
+                side = self.faces[sides_list[side_index]]
+                temp_centre_x += side.centre.x / num_sides
+                temp_centre_y += side.centre.y / num_sides
+                temp_centre_z += side.centre.z / num_sides
+            #print(i, "temrorary", temp_centre_x, temp_centre_y, temp_centre_z)
             temp_centre = self.point(temp_centre_x, temp_centre_y, temp_centre_z)
             centre_x = 0
             centre_y = 0
@@ -131,6 +132,7 @@ class mesh:
             centre_x = centre_x / (4*temp_total_volume)
             centre_y = centre_y / (4*temp_total_volume)
             centre_z = centre_z / (4*temp_total_volume)
+            #print(i, "temp volume", temp_total_volume, "centre", centre_x, centre_y, centre_z)
             self.cells[i].centre = self.point(centre_x, centre_y, centre_z)
             self.cells[i].volume = 0.0
             for side_index in range(num_sides):
@@ -142,6 +144,7 @@ class mesh:
                     A = self.points[side.vertices[j]]
                     B = self.points[side.vertices[next]]
                     self.cells[i].volume += geo.volume(self.cells[i].centre, C, A, B)
+            #print(i, "volume", self.cells[i].volume)
 
             #add owner / neighbour
             for j in range(num_sides):

@@ -17,7 +17,7 @@ def diffusion(variable, gamma, matrix, source, mesh):
             n_index = f.neighbour
             #print(p_index, n_index)
             n = mesh.cells[n_index]
-            gamma_f = f.inter_coef*gamma[p_index] + (1.0 - f.inter_coef)*gamma[n_index]
+            gamma_f = f.inter_coef*gamma[p_index] + (1.0 - f.inter_coef)*(-1.0)*gamma[n_index]
             d = geo.distance(p.centre, n.centre)
             a_n = gamma_f * geo.vec_len(f.area) / d
             matrix[p_index][p_index] -= a_n
@@ -32,8 +32,11 @@ def diffusion(variable, gamma, matrix, source, mesh):
                 case "Dirichlet":
                    gamma_f = gamma[p_index]
                    d = geo.distance(p.centre, f.centre)
-                   matrix[p_index][p_index] -= gamma_f / d
-                   source[p_index][0] += f.boundary_value * gamma_f / d
+                   #print('p.centre: ', p.centre.x, p.centre.y, p.centre.z)
+                   #print('f.centre: ', f.centre.x, f.centre.y, f.centre.z)
+                   #print(d)
+                   matrix[p_index][p_index] -= (-1.0)*gamma_f / d
+                   source[p_index][0] += f.boundary_value * (-1.0)*gamma_f / d
                 case _:
                     print("Unrecognized boundary condition")
                     quit()

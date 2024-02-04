@@ -5,6 +5,7 @@ import argparse
 import mesh_debug
 import initialize
 import discretize
+import output
 
 parser = argparse.ArgumentParser()
 parser.add_argument('points_file_address')
@@ -28,6 +29,7 @@ del cells_file
 del boundaries_file
 
 mesh_debug.print_neighbours(mesh1)
+#mesh_debug.print_centres(mesh1)
 
 N = len(mesh1.cells)
 T = numpy.zeros((N,1))
@@ -36,24 +38,31 @@ gamma = numpy.zeros((N,1))
 
 initialize.velocity(u, mesh1)
 initialize.variable(T, mesh1)
-initialize.variable(gamma, mesh1)
+initialize.diffusion_coef(gamma, mesh1)
+initialize.boundary_condition(mesh1)
+
+output_file = open('output.dat', 'w')
 
 tStart = 0.0
 tStop = 1.0
-time_step = 0.5
+time_step = 0.05
 tCurrent = tStart
-print(T)
+output_file.write(output.scalar_to_string(T) + '\n')
+
 while tCurrent < tStop:
     dt = min(time_step, tStop - tCurrent)
     A = numpy.zeros((N, N))
     b = numpy.zeros((N, 1))
     discretize.time_derivative(T, dt, A, b, mesh1)
-    #print(A)
-    #print(b)
+    # print(A)
+    # print(b)
     discretize.diffusion(T, gamma, A, b, mesh1)
-    #print(A)
-    #print(b)
+    # if (tCurrent == tStart):
+    #     print(A)
+    #     print(b)
     T = numpy.linalg.solve(A,b)
-    print(T)
+    output_file.write(output.scalar_to_string(T) + '\n')
     tCurrent += dt
+
+output_file.close()
 
