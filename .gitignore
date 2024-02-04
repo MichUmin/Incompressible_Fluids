@@ -1,0 +1,7 @@
+*.exe
+*.dat
+*.o
+*.pyc
+*.txt
+settings.json
+*checkpoint.ipynb
