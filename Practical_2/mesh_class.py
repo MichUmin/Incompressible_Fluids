@@ -17,6 +17,8 @@ class mesh:
             self.centre = False
             self.area = [0.0 , 0.0, 0.0]
             self.inter_coef = 0.5
+            self.boundary_type = "internal"
+            self.boundary_value = False
 
     class cell:
         def __init__(self, faces_list):
@@ -157,4 +159,26 @@ class mesh:
                     self.faces[side].inter_coef = d_p / (d_p + d_n)
                     self.cells[i].neighbours.append(the_other_cell)
                     self.cells[the_other_cell].neighbours.append(i)
+        
+
+        n_boundary_types = int(BoundariesFile.readline())
+        BoundariesFile.readline()
+        for i in range(n_boundary_types):
+            type = BoundariesFile.readline()
+            type = type.replace("\n", "")
+            num_faces = int(BoundariesFile.readline())
+            BoundariesFile.readline()
+            boundary_faces = BoundariesFile.readline()
+            boundary_faces = boundary_faces.split(" ")
+            for j in range(num_faces):
+                boundary_face = int(boundary_faces[j])
+                if self.faces[boundary_face].neighbour >= 0:
+                    #this face has a neighbour so it is internal
+                    print("Internal face encountered when reading bounary path: ", type)
+                    quit()
+                else:
+                    self.faces[boundary_face].boundary_type = type
+            BoundariesFile.readline()
+
+
             

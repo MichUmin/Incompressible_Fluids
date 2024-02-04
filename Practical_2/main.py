@@ -27,7 +27,7 @@ del faces_file
 del cells_file
 del boundaries_file
 
-#mesh_debug.print_neighbours(mesh1)
+mesh_debug.print_neighbours(mesh1)
 
 N = len(mesh1.cells)
 T = numpy.zeros((N,1))

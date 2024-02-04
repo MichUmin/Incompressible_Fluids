@@ -26,6 +26,17 @@ def diffusion(variable, gamma, matrix, source, mesh):
             matrix[n_index][p_index] += a_n
         else:
             #this is a boundary face
-            pass
+            match f.boundary_type:
+                case "do_nothing":
+                    pass
+                case "Dirichlet":
+                   gamma_f = gamma[p_index]
+                   d = geo.distance(p.centre, f.centre)
+                   matrix[p_index][p_index] -= gamma_f / d
+                   source[p_index][0] += f.boundary_value * gamma_f / d
+                case _:
+                    print("Unrecognized boundary condition")
+                    quit()
+
 
         
