@@ -36,7 +36,7 @@ def diffusion(variable, gamma, matrix, source, mesh):
                    #print('f.centre: ', f.centre.x, f.centre.y, f.centre.z)
                    #print(d)
                    matrix[p_index][p_index] -= (-1.0)*gamma_f / d
-                   source[p_index][0] += f.boundary_value * (-1.0)*gamma_f / d
+                   source[p_index][0] -= f.boundary_value * (-1.0)*gamma_f / d
                 case _:
                     print("Unrecognized boundary condition")
                     quit()
@@ -45,4 +45,4 @@ def diffusion(variable, gamma, matrix, source, mesh):
 def source(variable, matrix, source, mesh):
     num_cells = len(mesh.cells)
     for i in range(num_cells):
-        source[i][0] += 0.5
+        source[i][0] += 0.0

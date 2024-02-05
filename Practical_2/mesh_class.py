@@ -1,4 +1,3 @@
-
 import mesh_geometry_operations as geo
 
 class mesh:
