@@ -1,6 +1,7 @@
 import math
 import numpy
 import mesh_class
+import field_class
 import argparse
 import mesh_debug
 import initialize
@@ -32,22 +33,22 @@ del boundaries_file
 #mesh_debug.print_centres(mesh1)
 
 N = len(mesh1.cells)
-T = numpy.zeros((N,1))
-u = numpy.zeros((N,3))
-gamma = numpy.zeros((N,1))
+T = field_class.field(N)
+#u = numpy.zeros((N,3))
+gamma = field_class.field(N)
 
-initialize.velocity(u, mesh1)
+#initialize.velocity(u, mesh1)
 initialize.variable(T, mesh1)
 initialize.diffusion_coef(gamma, mesh1)
-initialize.boundary_condition(mesh1)
+#initialize.boundary_condition(mesh1)
 
 output_file = open('output.dat', 'w')
 
 tStart = 0.0
-tStop = 10.0
+tStop = 1.0
 time_step = 0.05
 tCurrent = tStart
-output_file.write(output.scalar_to_string(T) + '\n')
+output_file.write(output.field_to_string(T) + '\n')
 
 while tCurrent < tStop:
     dt = min(time_step, tStop - tCurrent)
@@ -61,8 +62,8 @@ while tCurrent < tStop:
     # if (tCurrent == tStart):
     #     print(A)
     #     print(b)
-    T = numpy.linalg.solve(A,b)
-    output_file.write(output.scalar_to_string(T) + '\n')
+    T.values = numpy.linalg.solve(A,b)
+    output_file.write(output.field_to_string(T) + '\n')
     tCurrent += dt
 
 output_file.close()

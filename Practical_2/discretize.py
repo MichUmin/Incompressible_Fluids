@@ -1,10 +1,10 @@
 import mesh_geometry_operations as geo
 
 def time_derivative(variable, time_step, matrix, source, mesh):
-    N = len(variable)
+    N = len(mesh.cells)
     for index in range(N):
         matrix[index][index] += (mesh.cells[index].volume) / time_step
-        source[index][0] += variable[index][0] * (mesh.cells[index].volume) / time_step
+        source[index][0] += variable.values[index][0] * (mesh.cells[index].volume) / time_step
 
 def diffusion(variable, gamma, matrix, source, mesh):
     num_faces = len(mesh.faces)
@@ -17,7 +17,7 @@ def diffusion(variable, gamma, matrix, source, mesh):
             n_index = f.neighbour
             #print(p_index, n_index)
             n = mesh.cells[n_index]
-            gamma_f = f.inter_coef*gamma[p_index] + (1.0 - f.inter_coef)*gamma[n_index]
+            gamma_f = f.inter_coef*gamma.values[p_index] + (1.0 - f.inter_coef)*gamma.values[n_index]
             d = geo.distance(p.centre, n.centre)
             a_n = (-1.0)*gamma_f * geo.vec_len(f.area) / d
             matrix[p_index][p_index] -= a_n
@@ -26,20 +26,11 @@ def diffusion(variable, gamma, matrix, source, mesh):
             matrix[n_index][p_index] += a_n
         else:
             #this is a boundary face
-            match f.boundary_type:
-                case "do_nothing":
-                    pass
-                case "Dirichlet":
-                   gamma_f = gamma[p_index]
-                   d = geo.distance(p.centre, f.centre)
-                   #print('p.centre: ', p.centre.x, p.centre.y, p.centre.z)
-                   #print('f.centre: ', f.centre.x, f.centre.y, f.centre.z)
-                   #print(d)
-                   matrix[p_index][p_index] -= (-1.0)*gamma_f / d
-                   source[p_index][0] -= f.boundary_value * (-1.0)*gamma_f / d
-                case _:
-                    print("Unrecognized boundary condition")
-                    quit()
+            if (f.boundary_type != 'do_nothing'):            
+                gamma_f = gamma.boundary_values[f.boundary_type]
+                d = geo.distance(p.centre, f.centre)
+                matrix[p_index][p_index] -= (-1.0)*gamma_f / d
+                source[p_index][0] -= variable.boundary_values[f.boundary_type] * (-1.0)*gamma_f / d
 
 
 def source(variable, matrix, source, mesh):
