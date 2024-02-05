@@ -33,11 +33,11 @@ del boundaries_file
 #mesh_debug.print_centres(mesh1)
 
 N = len(mesh1.cells)
-T = field_class.field(N)
-#u = numpy.zeros((N,3))
-gamma = field_class.field(N)
+T = field_class.scalar_field(N)
+u = field_class.vector_field(N)
+gamma = field_class.scalar_field(N)
 
-#initialize.velocity(u, mesh1)
+initialize.velocity(u, mesh1)
 initialize.variable(T, mesh1)
 initialize.diffusion_coef(gamma, mesh1)
 #initialize.boundary_condition(mesh1)
@@ -48,7 +48,7 @@ tStart = 0.0
 tStop = 1.0
 time_step = 0.05
 tCurrent = tStart
-output_file.write(output.field_to_string(T) + '\n')
+output_file.write(output.scalar_field_to_string(T) + '\n')
 
 while tCurrent < tStop:
     dt = min(time_step, tStop - tCurrent)
@@ -63,7 +63,7 @@ while tCurrent < tStop:
     #     print(A)
     #     print(b)
     T.values = numpy.linalg.solve(A,b)
-    output_file.write(output.field_to_string(T) + '\n')
+    output_file.write(output.scalar_field_to_string(T) + '\n')
     tCurrent += dt
 
 output_file.close()
