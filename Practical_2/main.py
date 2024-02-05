@@ -28,7 +28,7 @@ del faces_file
 del cells_file
 del boundaries_file
 
-mesh_debug.print_neighbours(mesh1)
+#mesh_debug.print_neighbours(mesh1)
 #mesh_debug.print_centres(mesh1)
 
 N = len(mesh1.cells)
@@ -44,7 +44,7 @@ initialize.boundary_condition(mesh1)
 output_file = open('output.dat', 'w')
 
 tStart = 0.0
-tStop = 1.0
+tStop = 10.0
 time_step = 0.05
 tCurrent = tStart
 output_file.write(output.scalar_to_string(T) + '\n')
@@ -57,6 +57,7 @@ while tCurrent < tStop:
     # print(A)
     # print(b)
     discretize.diffusion(T, gamma, A, b, mesh1)
+    discretize.source(T, A, b, mesh1)
     # if (tCurrent == tStart):
     #     print(A)
     #     print(b)

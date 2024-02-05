@@ -17,9 +17,9 @@ def diffusion(variable, gamma, matrix, source, mesh):
             n_index = f.neighbour
             #print(p_index, n_index)
             n = mesh.cells[n_index]
-            gamma_f = f.inter_coef*gamma[p_index] + (1.0 - f.inter_coef)*(-1.0)*gamma[n_index]
+            gamma_f = f.inter_coef*gamma[p_index] + (1.0 - f.inter_coef)*gamma[n_index]
             d = geo.distance(p.centre, n.centre)
-            a_n = gamma_f * geo.vec_len(f.area) / d
+            a_n = (-1.0)*gamma_f * geo.vec_len(f.area) / d
             matrix[p_index][p_index] -= a_n
             matrix[n_index][n_index] -= a_n
             matrix[p_index][n_index] += a_n
@@ -42,4 +42,7 @@ def diffusion(variable, gamma, matrix, source, mesh):
                     quit()
 
 
-        
+def source(variable, matrix, source, mesh):
+    num_cells = len(mesh.cells)
+    for i in range(num_cells):
+        source[i][0] += 0.5
