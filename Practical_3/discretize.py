@@ -42,4 +42,3 @@ def source(variable, matrix, source, mesh):
     num_cells = len(mesh.cells)
     for i in range(num_cells):
         source[i][0] += 0.0
-
