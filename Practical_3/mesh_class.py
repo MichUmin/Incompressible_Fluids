@@ -16,8 +16,7 @@ class mesh:
             self.centre = False
             self.area = [0.0 , 0.0, 0.0]
             self.inter_coef = 0.5
-            self.boundary_type = "internal"
-            # self.boundary_value = False
+            self.boundary_name = "internal"
 
     class cell:
         def __init__(self, faces_list):
@@ -166,8 +165,8 @@ class mesh:
         num_boundary_patches = int(BoundariesFile.readline())
         BoundariesFile.readline()
         for i in range(num_boundary_patches):
-            type = BoundariesFile.readline() # read the type of the path
-            type = type.replace("\n", "") # convert to plain string
+            name = BoundariesFile.readline() # read the type of the path
+            name = name.replace("\n", "") # convert to plain string
             num_faces = int(BoundariesFile.readline()) # read the number of faces in the patch
             BoundariesFile.readline() # skip the opening bracket
             boundary_faces = BoundariesFile.readline()
@@ -176,11 +175,14 @@ class mesh:
                 boundary_face = int(boundary_faces[j])
                 if self.faces[boundary_face].neighbour >= 0:
                     #this face has a neighbour so it is internal
-                    print("Internal face encountered when reading bounary path: ", type)
+                    print("Internal face encountered when reading bounary path: ", name)
                     quit()
                 else:
-                    self.faces[boundary_face].boundary_type = type
+                    self.faces[boundary_face].boundary_name = name
             BoundariesFile.readline() # skip the closing bracket
+
+
+
 
 
             

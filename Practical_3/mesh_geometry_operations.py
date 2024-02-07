@@ -24,7 +24,7 @@ def add_vectors(v1, v2):
     help_v[2] = v1[2] + v2[2]
     return help_v
 
-def dot_product(v1, v2):
+def dot(v1, v2):
     result = v1[0]*v2[0]
     result += v1[1]*v2[1]
     result += v1[2]*v2[2]

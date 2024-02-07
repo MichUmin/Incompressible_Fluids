@@ -4,6 +4,7 @@ class scalar_field:
     def __init__(self, size):
         self.values = numpy.zeros((size,1))
         self.boundary_values = {}
+        self.boundary_gradient = {}
 
 
 class vector_field:

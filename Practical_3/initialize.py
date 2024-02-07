@@ -3,8 +3,8 @@ import math
 def velocity(velocity_field, mesh):
     N = len(mesh.cells)
     for index in range(N):
-        velocity_field.values[index] = [1.0, 0.0, 0.0]
-    velocity_field.boundary_values = {'left': [1.0, 0.0, 0.0], 'right': [1.0, 0.0, 0.0], 'top': [1.0, 0.0, 0.0], 'bottom': [1.0, 0.0, 0.0], 'do_nothing': [1.0, 0.0, 0.0]}
+        velocity_field.values[index] = [0.0, 0.0, 0.0]
+    velocity_field.boundary_values = {'left': [0.0, 0.0, 0.0], 'right': [0.0, 0.0, 0.0], 'top': [0.0, 0.0, 0.0], 'bottom': [0.0, 0.0, 0.0], 'do_nothing': [0.0, 0.0, 0.0]}
 
 # def variable(variable_vector, mesh):
 #     N = len(variable_vector)
@@ -17,6 +17,7 @@ def variable(variable_vector, mesh):
     for index in range(N):
         variable_vector.values[index] = [1.0]
     variable_vector.boundary_values = {'left': -1.0, 'right': 2.0, 'top': 1.0, 'bottom': -1.0, 'do_nothing': 0.0}
+
 
 def diffusion_coef(gamma_vector, mesh):
     N = len(mesh.cells)

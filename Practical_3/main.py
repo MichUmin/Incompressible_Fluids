@@ -13,6 +13,7 @@ parser.add_argument('points_file_address')
 parser.add_argument('faces_file_address')
 parser.add_argument('cells_file_address')
 parser.add_argument('boundary_file_address')
+parser.add_argument('output_file_address')
 files = parser.parse_args()
 
 points_file = open(files.points_file_address, 'r')
@@ -42,7 +43,7 @@ initialize.variable(T, mesh1)
 initialize.diffusion_coef(gamma, mesh1)
 #initialize.boundary_condition(mesh1)
 
-output_file = open('output.dat', 'w')
+output_file = open(files.output_file_address, 'w')
 
 tStart = 0.0
 tStop = 1.0
@@ -58,6 +59,7 @@ while tCurrent < tStop:
     # print(A)
     # print(b)
     discretize.diffusion(T, gamma, A, b, mesh1)
+    discretize.convection(T, u, A, b, mesh1)
     discretize.source(T, A, b, mesh1)
     # if (tCurrent == tStart):
     #     print(A)
