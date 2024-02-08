@@ -181,6 +181,51 @@ class mesh:
                     self.faces[boundary_face].boundary_name = name
             BoundariesFile.readline() # skip the closing bracket
 
+        # enforce that the face normal points out of the owner
+        for f_index in range(n_faces):
+            f = self.faces[f_index]
+            o_index = f.owner
+            o = self.cells[o_index]
+            FC_vector = [0.0, 0.0, 0.0]
+            FC_vector[0] = o.centre.x - f.centre.x
+            FC_vector[1] = o.centre.y - f.centre.y
+            FC_vector[2] = o.centre.z - f.centre.z
+            if (geo.dot(FC_vector, f.area) > 0.0):
+                self.faces[f_index].area = geo.flip(f.area)
+    
+    def is_inside(self, point_vector, cell_index):
+        n_faces = len(self.cells[cell_index].faces)
+        count = 0
+        for index in range(n_faces):
+            face_index = self.cells[cell_index].faces[index]
+            f = self.faces[face_index]
+            FP_vector = [0.0, 0.0, 0.0]
+            FP_vector[0] = point_vector.x - f.centre.x
+            FP_vector[1] = point_vector.y - f.centre.y
+            FP_vector[2] = point_vector.z - f.centre.z
+            dot_p = geo.dot(f.area, FP_vector)
+            if f.owner == cell_index:
+                if dot_p <= 0.0:
+                    count += 1
+                else:
+                    return False
+            else:
+                if dot_p >= 0.0:
+                    count += 1
+                else:
+                    return False
+                
+        if count == n_faces:
+            return True
+        else:
+            print("Loop done")
+            return False
+
+
+
+
+
+
 
 
 

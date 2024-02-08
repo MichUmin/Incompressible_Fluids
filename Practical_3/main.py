@@ -46,7 +46,7 @@ initialize.diffusion_coef(gamma, mesh1)
 output_file = open(files.output_file_address, 'w')
 
 tStart = 0.0
-tStop = 1.0
+tStop = 10.0
 time_step = 0.05
 tCurrent = tStart
 output_file.write(output.scalar_field_to_string(T) + '\n')
@@ -59,7 +59,7 @@ while tCurrent < tStop:
     # print(A)
     # print(b)
     discretize.diffusion(T, gamma, A, b, mesh1)
-    discretize.convection(T, u, A, b, mesh1)
+    #discretize.convection(T, u, A, b, mesh1)
     discretize.source(T, A, b, mesh1)
     # if (tCurrent == tStart):
     #     print(A)

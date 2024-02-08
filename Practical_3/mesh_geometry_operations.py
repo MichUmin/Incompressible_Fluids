@@ -30,6 +30,12 @@ def dot(v1, v2):
     result += v1[2]*v2[2]
     return result
 
+def flip(v1):
+    result = [0.0, 0.0, 0.0]
+    for index in range(3):
+        result[index] = (-1.0)*v1[index]
+    return result
+
 def volume(A, B, C, D):
     base_area = vec_area(A, B, C)
     AD_x = D.x - A.x
