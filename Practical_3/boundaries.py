@@ -1,1 +1,1 @@
-type = {"do_nothing":"do_nothing", "Dirichlet": "Dirichlet", "Neumann":"Neumann", "left": "Dirichlet", "right": "Dirichlet", "top": "Neumann", "bottom": "Neumann"}
+type = {"do_nothing":"do_nothing", "Dirichlet": "Dirichlet", "Neumann":"Neumann", "left": "Dirichlet", "right": "Neumann", "top": "Neumann", "bottom": "Neumann"}

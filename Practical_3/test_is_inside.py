@@ -39,4 +39,7 @@ for i in range(n_cells):
             print("Fail centre of", j ,"is in", i)
         if ((i != j)and(result != False)):
             print("Fail centre of", j, "should not be in", i)
+    result2 = mesh1.find(mesh1.cells[i].centre)
+    if result2 != i:
+        print("Fail centre of", i, "should be in", i)
         

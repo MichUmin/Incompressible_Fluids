@@ -15,8 +15,8 @@ def velocity(velocity_field, mesh):
 def variable(variable_vector, mesh):
     N = len(mesh.cells)
     for index in range(N):
-        variable_vector.values[index] = [1.0]
-    variable_vector.boundary_values = {'left': 0.0, 'right': 2.0, 'top': 2.0, 'bottom': -1.0, 'do_nothing': 0.0}
+        variable_vector.values[index] = [0.0]
+    variable_vector.boundary_values = {'left': 0.0, 'right': 0.0, 'top': 0.0, 'bottom': 0.0, 'do_nothing': 0.0}
     variable_vector.boundary_gradient = {"left": [0.0, 0.0, 0.0], "right": [0.0, 0.0, 0.0], "top": [0.0, 0.0, 0.0], "bottom": [0.0, 0.0, 0.0], "do_nothing": [0.0, 0.0, 0.0]}
 
 

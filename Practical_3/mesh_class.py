@@ -200,9 +200,9 @@ class mesh:
             face_index = self.cells[cell_index].faces[index]
             f = self.faces[face_index]
             FP_vector = [0.0, 0.0, 0.0]
-            FP_vector[0] = point_vector.x - f.centre.x
-            FP_vector[1] = point_vector.y - f.centre.y
-            FP_vector[2] = point_vector.z - f.centre.z
+            FP_vector[0] = point_vector[0] - f.centre.x
+            FP_vector[1] = point_vector[1] - f.centre.y
+            FP_vector[2] = point_vector[2] - f.centre.z
             dot_p = geo.dot(f.area, FP_vector)
             if f.owner == cell_index:
                 if dot_p <= 0.0:
@@ -220,6 +220,13 @@ class mesh:
         else:
             print("Loop done")
             return False
+    
+    def find(self, point_vector):
+        n_cells = len(self.cells)
+        for i in range(n_cells):
+            if self.is_inside(point_vector, i):
+                return(i)
+        return(-1)
 
 
 

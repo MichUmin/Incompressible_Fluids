@@ -7,13 +7,15 @@ import mesh_debug
 import initialize
 import discretize
 import output
+import os
+import printing
 
 parser = argparse.ArgumentParser()
 parser.add_argument('points_file_address')
 parser.add_argument('faces_file_address')
 parser.add_argument('cells_file_address')
 parser.add_argument('boundary_file_address')
-parser.add_argument('output_file_address')
+parser.add_argument('output_directory_address')
 files = parser.parse_args()
 
 points_file = open(files.points_file_address, 'r')
@@ -30,26 +32,35 @@ del faces_file
 del cells_file
 del boundaries_file
 
-#mesh_debug.print_neighbours(mesh1)
-#mesh_debug.print_centres(mesh1)
+output_directory_address = files.output_directory_address
+if not os.path.isdir(output_directory_address):
+    print("invalid output directory")
+    exit()
+if len(os.listdir(output_directory_address)) > 0:
+    print("non empty output directory")
+    exit()
 
 N = len(mesh1.cells)
 T = field_class.scalar_field(N)
 u = field_class.vector_field(N)
 gamma = field_class.scalar_field(N)
 
+source_point_vector = [7.0, 0.0, 0.0]
+source_cell = mesh1.find(source_point_vector)
+
 initialize.velocity(u, mesh1)
 initialize.variable(T, mesh1)
 initialize.diffusion_coef(gamma, mesh1)
 #initialize.boundary_condition(mesh1)
 
-output_file = open(files.output_file_address, 'w')
-
 tStart = 0.0
-tStop = 10.0
+tStop = 1.0
 time_step = 0.05
 tCurrent = tStart
-output_file.write(output.scalar_field_to_string(T) + '\n')
+
+print(tCurrent)
+output_file = os.path.join(output_directory_address, "time"+str(tCurrent)+".dat")
+printing.twoD_scalar(output_file, T, mesh1)
 
 while tCurrent < tStop:
     dt = min(time_step, tStop - tCurrent)
@@ -60,13 +71,14 @@ while tCurrent < tStop:
     # print(b)
     discretize.diffusion(T, gamma, A, b, mesh1)
     #discretize.convection(T, u, A, b, mesh1)
-    discretize.source(T, A, b, mesh1)
+    discretize.source(source_cell, T, A, b, mesh1)
     # if (tCurrent == tStart):
     #     print(A)
     #     print(b)
     T.values = numpy.linalg.solve(A,b)
-    output_file.write(output.scalar_field_to_string(T) + '\n')
     tCurrent += dt
+    print(tCurrent)
+    output_file = os.path.join(output_directory_address, "time"+str(tCurrent)+".dat")
+    printing.twoD_scalar(output_file, T, mesh1)
 
-output_file.close()
 

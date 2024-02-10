@@ -37,12 +37,10 @@ def diffusion(variable, gamma, matrix, source, mesh):
                 source[p_index][0] -= variable.boundary_values[f.boundary_name] * (-1.0)*gamma_f / d
 
 
-def source(variable, matrix, source, mesh):
+def source(source_cell_index, variable, matrix, source_vector, mesh):
     # discretize source term in in Ax = b form
     # hard coded source term
-    num_cells = len(mesh.cells)
-    for i in range(num_cells):
-        source[i][0] += 0.0
+    source_vector[source_cell_index][0] += 1.0
 
 def convection(variable, velocity, matrix, source_vector, mesh):
     # convection_interpolation(variable, velocity, matrix, source_vector, mesh)
