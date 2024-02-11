@@ -51,18 +51,18 @@ def diffusion(variable, gamma, matrix, source, mesh):
 def source(source_cell_index, variable, matrix, source_vector, mesh):
     # discretize source term in in Ax = b form
     # hard coded source term
-    source_vector[source_cell_index][0] += 10.0
+    source_vector[source_cell_index][0] += 1.0
 
 def convection(variable, velocity, matrix, source_vector, mesh):
-    convection_interpolation(variable, velocity, matrix, source_vector, mesh)
-    # convection_upstream(variable, velocity, matrix, source_vector, mesh)
+    # convection_interpolation(variable, velocity, matrix, source_vector, mesh)
+    convection_upstream(variable, velocity, matrix, source_vector, mesh)
 
 def convection_interpolation(variable, velocity, matrix, source_vector, mesh):
     # discretize the convectionn operator in Ax = b form
     # linear interpolation of the variable value at the face
     num_faces = len(mesh.faces)
-    for index in range(num_faces):
-        f = mesh.faces[index]
+    for f_index in range(num_faces):
+        f = mesh.faces[f_index]
         p_index = f.owner
         p = mesh.cells[p_index]
         if f.neighbour >= 0:
@@ -95,7 +95,7 @@ def convection_interpolation(variable, velocity, matrix, source_vector, mesh):
                     vector_to_cell_centre[0] = p.centre.x - f.centre.x
                     vector_to_cell_centre[1] = p.centre.y - f.centre.y
                     vector_to_cell_centre[2] = p.centre.z - f.centre.z
-                    source_vector[p_index][0] += geo.dot(vector_to_cell_centre, variable.boundary_gradient[f.boundary_name])
+                    source_vector[p_index][0] += F*geo.dot(vector_to_cell_centre, variable.boundary_gradient[f.boundary_name])
                 case _:
                     # catch all other boundary condition types
                     print('Invalid boundary condition')
@@ -146,8 +146,14 @@ def convection_upstream(variable, velocity, matrix, source_vector, mesh):
                     F = geo.dot(f.area, u_f)
                     source_vector[p_index][0] -= F * variable.boundary_values[f.boundary_name]
                 case 'Neumann':
-                    print('Remember to implement this boundary condition')
-                    quit()
+                    u_f = velocity.boundary_values[f.boundary_name]
+                    F = geo.dot(f.area, u_f)
+                    matrix[p_index][p_index] += F
+                    vector_to_cell_centre = [0.0, 0.0, 0.0]
+                    vector_to_cell_centre[0] = p.centre.x - f.centre.x
+                    vector_to_cell_centre[1] = p.centre.y - f.centre.y
+                    vector_to_cell_centre[2] = p.centre.z - f.centre.z
+                    source_vector[p_index][0] += F*geo.dot(vector_to_cell_centre, variable.boundary_gradient[f.boundary_name])
                 case _:
                     # catch all other boundary condition types
                     print('Invalid boundary condition')

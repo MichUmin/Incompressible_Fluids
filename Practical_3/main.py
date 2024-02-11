@@ -57,9 +57,10 @@ tStart = 0.0
 tStop = 1.0
 time_step = 0.05
 tCurrent = tStart
+step = 0
 
 print(tCurrent)
-output_file = os.path.join(output_directory_address, "time"+str(tCurrent)+".dat")
+output_file = os.path.join(output_directory_address, "step"+str(step)+".dat")
 printing.twoD_scalar(output_file, T, mesh1)
 
 while tCurrent < tStop:
@@ -77,8 +78,9 @@ while tCurrent < tStop:
     #     print(b)
     T.values = numpy.linalg.solve(A,b)
     tCurrent += dt
+    step += 1
     print(tCurrent)
-    output_file = os.path.join(output_directory_address, "time"+str(tCurrent)+".dat")
+    output_file = os.path.join(output_directory_address, "step"+str(step)+".dat")
     printing.twoD_scalar(output_file, T, mesh1)
 
 
