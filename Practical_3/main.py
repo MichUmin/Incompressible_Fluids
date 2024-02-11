@@ -45,7 +45,7 @@ T = field_class.scalar_field(N)
 u = field_class.vector_field(N)
 gamma = field_class.scalar_field(N)
 
-source_point_vector = [7.0, 0.0, 0.0]
+source_point_vector = [0.499, 0.0, 0.0]
 source_cell = mesh1.find(source_point_vector)
 
 initialize.velocity(u, mesh1)
@@ -70,7 +70,7 @@ while tCurrent < tStop:
     # print(A)
     # print(b)
     discretize.diffusion(T, gamma, A, b, mesh1)
-    #discretize.convection(T, u, A, b, mesh1)
+    discretize.convection(T, u, A, b, mesh1)
     discretize.source(source_cell, T, A, b, mesh1)
     # if (tCurrent == tStart):
     #     print(A)
