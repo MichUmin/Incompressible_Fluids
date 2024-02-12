@@ -153,13 +153,19 @@ class mesh:
                     self.faces[side].owner = i
                 else:
                     # faces has an owner so this is a neighbour
-                    self.faces[side].neighbour = i
-                    the_other_cell = self.faces[side].owner
-                    d_p = geo.distance(self.faces[side].centre, self.cells[the_other_cell].centre)
-                    d_n = geo.distance(self.faces[side].centre, self.cells[i].centre)
-                    self.faces[side].inter_coef = d_p / (d_p + d_n)
-                    self.cells[i].neighbours.append(the_other_cell)
-                    self.cells[the_other_cell].neighbours.append(i)
+                    if self.faces[side].neighbour < 0:
+                        # this face does not have a neighbour yet so we add one
+                        self.faces[side].neighbour = i
+                        the_other_cell = self.faces[side].owner
+                        d_p = geo.distance(self.faces[side].centre, self.cells[the_other_cell].centre)
+                        d_n = geo.distance(self.faces[side].centre, self.cells[i].centre)
+                        self.faces[side].inter_coef = d_p / (d_p + d_n)
+                        self.cells[i].neighbours.append(the_other_cell)
+                        self.cells[the_other_cell].neighbours.append(i)
+                    else:
+                        # ERROR this face already has both owner and neighbour
+                        print("face", side, "already has an owner and a neighbour\n")
+                        exit()
         
 
         num_boundary_patches = int(BoundariesFile.readline())
@@ -210,7 +216,7 @@ class mesh:
                 else:
                     return False
             else:
-                if dot_p >= 0.0:
+                if dot_p > 0.0:
                     count += 1
                 else:
                     return False

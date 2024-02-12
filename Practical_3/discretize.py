@@ -62,40 +62,41 @@ def convection_interpolation(variable, velocity, matrix, source_vector, mesh):
     # linear interpolation of the variable value at the face
     num_faces = len(mesh.faces)
     for f_index in range(num_faces):
-        f = mesh.faces[f_index]
-        p_index = f.owner
-        p = mesh.cells[p_index]
-        if f.neighbour >= 0:
+        # f = mesh.faces[f_index]
+        p_index = mesh.faces[f_index].owner
+        # p = mesh.cells[p_index]
+        if mesh.faces[f_index].neighbour >= 0:
             # this is an internal face
-            n_index = f.neighbour
+            n_index = mesh.faces[f_index].neighbour
             # n = mesh.cells[n_index]
-            f_x = f.inter_coef
+            f_x = mesh.faces[f_index].inter_coef
             u_f = [0.0, 0.0, 0.0]
             for i in range(3):
                 u_f[i] = f_x*velocity.values[p_index][i] + (1.0 - f_x)*velocity.values[n_index][i]
-            F = geo.dot(f.area, u_f)
+            F = geo.dot(mesh.faces[f_index].area, u_f)
             matrix[p_index][p_index] += F*f_x
-            matrix[n_index][n_index] += F*(1.0-f_x)
+            matrix[n_index][n_index] -= F*(1.0-f_x)
             matrix[p_index][n_index] += F*(1.0-f_x)
-            matrix[n_index][p_index] += F*f_x
+            matrix[n_index][p_index] -= F*f_x
         else:
+            # print(f_index, "neighbour:", mesh.faces[f_index].neighbour, "boundary_name:", mesh.faces[f_index].boundary_name)
             # this is a boundary face
-            match boundaries.type[f.boundary_name]:
+            match boundaries.type[mesh.faces[f_index].boundary_name]:
                 case 'do_nothing':
                     pass
                 case 'Dirichlet':        
-                    u_f = velocity.boundary_values[f.boundary_name]
-                    F = geo.dot(f.area, u_f)
-                    source_vector[p_index][0] -= F * variable.boundary_values[f.boundary_name]
+                    u_f = velocity.boundary_values[mesh.faces[f_index].boundary_name]
+                    F = geo.dot(mesh.faces[f_index].area, u_f)
+                    source_vector[p_index][0] -= F * variable.boundary_values[mesh.faces[f_index].boundary_name]
                 case 'Neumann':
-                    u_f = velocity.boundary_values[f.boundary_name]
-                    F = geo.dot(f.area, u_f)
+                    u_f = velocity.boundary_values[mesh.faces[f_index].boundary_name]
+                    F = geo.dot(mesh.faces[f_index].area, u_f)
                     matrix[p_index][p_index] += F
                     vector_to_cell_centre = [0.0, 0.0, 0.0]
-                    vector_to_cell_centre[0] = p.centre.x - f.centre.x
-                    vector_to_cell_centre[1] = p.centre.y - f.centre.y
-                    vector_to_cell_centre[2] = p.centre.z - f.centre.z
-                    source_vector[p_index][0] += F*geo.dot(vector_to_cell_centre, variable.boundary_gradient[f.boundary_name])
+                    vector_to_cell_centre[0] = mesh.cells[p_index].centre.x - mesh.faces[f_index].centre.x
+                    vector_to_cell_centre[1] = mesh.cells[p_index].centre.y - mesh.faces[f_index].centre.y
+                    vector_to_cell_centre[2] = mesh.cells[p_index].centre.z - mesh.faces[f_index].centre.z
+                    source_vector[p_index][0] += F*geo.dot(vector_to_cell_centre, variable.boundary_gradient[mesh.faces[f_index].boundary_name])
                 case _:
                     # catch all other boundary condition types
                     print('Invalid boundary condition')
@@ -127,15 +128,15 @@ def convection_upstream(variable, velocity, matrix, source_vector, mesh):
             if (flow_direction >= 0.0):
                 # flow from P to N
                 matrix[p_index][p_index] += F
-                matrix[n_index][n_index] += 0.0
+                matrix[n_index][n_index] -= 0.0
                 matrix[p_index][n_index] += 0.0
-                matrix[n_index][p_index] += F
+                matrix[n_index][p_index] -= F
             else:
                 # flow from N to P
                 matrix[p_index][p_index] += 0.0
-                matrix[n_index][n_index] += F
+                matrix[n_index][n_index] -= F
                 matrix[p_index][n_index] += F
-                matrix[n_index][p_index] += 0.0
+                matrix[n_index][p_index] -= 0.0
         else:
             # this is a boundary face
             match boundaries.type[f.boundary_name]:

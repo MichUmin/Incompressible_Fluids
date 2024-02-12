@@ -32,6 +32,10 @@ del faces_file
 del cells_file
 del boundaries_file
 
+# mesh_debug.print_neighbours(mesh1)
+# print(mesh1.faces[20].neighbour)
+# print(mesh1.faces[20].boundary_name)
+
 output_directory_address = files.output_directory_address
 if not os.path.isdir(output_directory_address):
     print("invalid output directory")
@@ -45,7 +49,7 @@ T = field_class.scalar_field(N)
 u = field_class.vector_field(N)
 gamma = field_class.scalar_field(N)
 
-source_point_vector = [0.499, 0.0, 0.0]
+source_point_vector = [0.5, 0.0, 0.0]
 source_cell = mesh1.find(source_point_vector)
 
 initialize.velocity(u, mesh1)
